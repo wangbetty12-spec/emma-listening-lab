@@ -78,6 +78,26 @@
     .sidebar-toggle:hover { color: #fff; border-color: rgba(173, 203, 237, .38); background: rgba(255,255,255,.14); }
     .sidebar-toggle-text { display: none; }
     .side-kicker { padding: 0 10px 10px; color: #7690b1; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .site-entry {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 16px;
+      padding: 11px 12px;
+      color: #fff;
+      border: 1px solid rgba(255, 190, 142, .42);
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(240, 122, 72, .28), rgba(79, 142, 234, .18));
+      box-shadow: 0 8px 22px rgba(3, 14, 30, .15);
+      text-decoration: none;
+      transition: border-color .18s ease, background .18s ease, transform .18s ease;
+    }
+    .site-entry:hover { border-color: rgba(255, 214, 181, .76); background: linear-gradient(135deg, rgba(240, 122, 72, .4), rgba(79, 142, 234, .24)); transform: translateY(-1px); }
+    .site-entry-icon { width: 29px; height: 29px; display: grid; place-items: center; flex: 0 0 29px; color: #fff7f1; border: 1px solid rgba(255,255,255,.28); border-radius: 9px; background: rgba(255,255,255,.13); font-size: 12px; font-weight: 850; }
+    .site-entry-copy { min-width: 0; flex: 1; }
+    .site-entry-copy strong { display: block; font-size: 12px; font-weight: 800; }
+    .site-entry-copy small { display: block; margin-top: 1px; color: #d8e5f6; font-size: 10px; }
+    .site-entry-arrow { color: #ffd8bd; font-size: 17px; line-height: 1; }
     .module-card { margin-bottom: 12px; padding: 15px; border: 1px solid rgba(173, 203, 237, .16); border-radius: 18px; background: rgba(255,255,255,.07); }
     .module-card.active { border-color: rgba(255, 177, 122, .44); background: rgba(240, 122, 72, .14); }
     .module-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -221,7 +241,7 @@
     .app-shell.sidebar-collapsed .sidebar { width: 78px; flex-basis: 78px; padding: 24px 12px; overflow-y: auto; }
     .app-shell.sidebar-collapsed .brand { flex-direction: column; gap: 13px; padding: 0 0 22px; }
     .app-shell.sidebar-collapsed .brand-main { justify-content: center; }
-    .app-shell.sidebar-collapsed .brand-copy, .app-shell.sidebar-collapsed .side-kicker, .app-shell.sidebar-collapsed #moduleList, .app-shell.sidebar-collapsed .side-note { display: none; }
+    .app-shell.sidebar-collapsed .brand-copy, .app-shell.sidebar-collapsed .side-kicker, .app-shell.sidebar-collapsed .site-entry, .app-shell.sidebar-collapsed #moduleList, .app-shell.sidebar-collapsed .side-note { display: none; }
     .app-shell.sidebar-collapsed .brand-mark { width: 48px; height: 48px; flex-basis: 48px; font-size: 10px; }
     .app-shell.sidebar-collapsed .sidebar-toggle { margin: 0; }
     .app-shell.sidebar-collapsed .sidebar-toggle-icon { transform: rotate(180deg); }
@@ -286,6 +306,11 @@
         <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-expanded="true" title="收起菜单"><span class="sidebar-toggle-icon" aria-hidden="true">‹</span><span class="sidebar-toggle-text">收起菜单</span></button>
       </div>
       <div class="side-kicker">Skill library</div>
+      <a class="site-entry" href="./ielts-listening-vocab-typing/" aria-label="打开雅思词汇点读与听写">
+        <span class="site-entry-icon" aria-hidden="true">词</span>
+        <span class="site-entry-copy"><strong>雅思词汇点读与听写</strong><small>British English · 点读 / 盲听打字</small></span>
+        <span class="site-entry-arrow" aria-hidden="true">↗</span>
+      </a>
       <div id="moduleList"></div>
       <div class="side-note">
         <strong>本版使用提示</strong>
