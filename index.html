@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#10243f" />
+  <title>Emma's Listening Lab · IELTS 听力专项练习</title>
+  <style>
+    :root {
+      --navy-950: #0a1628;
+      --navy-900: #10243f;
+      --navy-800: #183556;
+      --blue-600: #2d74d8;
+      --blue-500: #4f8eea;
+      --blue-100: #e9f1ff;
+      --orange-500: #f07a48;
+      --orange-100: #fff0e9;
+      --green-600: #168668;
+      --green-100: #e8f7f1;
+      --red-600: #c84d4d;
+      --red-100: #fff0f0;
+      --ink: #182536;
+      --muted: #6d7b8d;
+      --line: #e5ebf3;
+      --surface: #ffffff;
+      --surface-2: #f6f8fb;
+      --shadow: 0 18px 48px rgba(18, 42, 72, .10);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-width: 320px; background: var(--surface-2); }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 84% 3%, rgba(79, 142, 234, .15), transparent 24rem),
+        linear-gradient(180deg, #f7faff 0%, #f5f7fa 100%);
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.55;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, audio:focus-visible { outline: 3px solid rgba(79, 142, 234, .35); outline-offset: 2px; }
+
+    .app-shell { min-height: 100vh; display: flex; }
+    .sidebar {
+      position: sticky;
+      top: 0;
+      width: 304px;
+      height: 100vh;
+      flex: 0 0 304px;
+      padding: 28px 20px 24px;
+      overflow-y: auto;
+      color: #eef5ff;
+      background: linear-gradient(180deg, var(--navy-950), var(--navy-900) 58%, #173253);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 0 10px 32px; }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: white;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--orange-500), #f5b26e);
+      box-shadow: 0 8px 24px rgba(240, 122, 72, .28);
+      font-weight: 850;
+      letter-spacing: -.06em;
+    }
+    .brand-name { font-size: 17px; font-weight: 800; letter-spacing: .02em; }
+    .brand-sub { color: #8ea7c7; font-size: 11px; margin-top: 1px; }
+    .side-kicker { padding: 0 10px 10px; color: #7690b1; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .module-card { margin-bottom: 12px; padding: 15px; border: 1px solid rgba(173, 203, 237, .16); border-radius: 18px; background: rgba(255,255,255,.07); }
+    .module-card.active { border-color: rgba(255, 177, 122, .44); background: rgba(240, 122, 72, .14); }
+    .module-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .module-title { font-size: 15px; font-weight: 750; }
+    .module-count { color: #a9c0dc; font-size: 11px; }
+    .module-desc { margin: 6px 0 0; color: #9db2cc; font-size: 12px; line-height: 1.5; }
+    .track-list { display: grid; gap: 7px; margin-top: 14px; }
+    .track-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px 9px;
+      color: #bdcce0;
+      border: 0;
+      border-radius: 11px;
+      background: transparent;
+      text-align: left;
+      transition: background .18s ease, color .18s ease, transform .18s ease;
+    }
+    .track-btn:hover { color: white; background: rgba(255,255,255,.08); transform: translateX(2px); }
+    .track-btn.active { color: #fff; background: rgba(79, 142, 234, .23); }
+    .track-num { width: 25px; height: 25px; display: grid; place-items: center; flex: 0 0 25px; border: 1px solid rgba(195, 217, 240, .25); border-radius: 8px; font-size: 11px; font-weight: 800; }
+    .track-btn.active .track-num { border-color: #7fa9e8; background: #3c72bc; }
+    .track-copy { min-width: 0; flex: 1; }
+    .track-copy strong { display: block; overflow: hidden; font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .track-copy small { display: block; margin-top: 1px; color: #7892b1; font-size: 10px; }
+    .track-btn.active small { color: #c3d7f3; }
+    .track-state { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #536c8d; }
+    .track-state.done { background: #49c497; box-shadow: 0 0 0 4px rgba(73,196,151,.13); }
+    .side-note { margin: 24px 10px 0; padding: 14px; color: #99afc9; border: 1px solid rgba(173, 203, 237, .12); border-radius: 14px; background: rgba(255,255,255,.04); font-size: 11px; }
+    .side-note strong { display: block; margin-bottom: 5px; color: #d9e8fa; font-size: 12px; }
+
+    .main { width: min(100%, 1240px); min-width: 0; margin: 0 auto; padding: 27px 36px 48px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 30px; }
+    .crumb { color: var(--muted); font-size: 12px; }
+    .crumb b { color: var(--navy-900); }
+    .top-actions { display: flex; align-items: center; gap: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; padding: 9px 13px; color: #47637f; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.76); font-size: 12px; font-weight: 650; }
+    .pill-dot { width: 7px; height: 7px; border-radius: 50%; background: #48b889; }
+    .ghost-btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 13px; color: #52657a; border: 1px solid var(--line); border-radius: 10px; background: white; font-size: 12px; font-weight: 700; }
+    .ghost-btn:hover { color: var(--blue-600); border-color: #c9d9ef; background: #fbfdff; }
+
+    .hero { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 24px; align-items: stretch; margin-bottom: 22px; }
+    .hero-copy { padding: 14px 0; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--orange-500); font-size: 12px; font-weight: 800; letter-spacing: .08em; }
+    .eyebrow::before { width: 26px; height: 2px; content: ""; border-radius: 3px; background: currentColor; }
+    h1 { margin: 13px 0 9px; color: var(--navy-900); font-size: clamp(27px, 4vw, 42px); line-height: 1.1; letter-spacing: -.045em; }
+    .hero-copy p { max-width: 660px; margin: 0; color: var(--muted); font-size: 14px; }
+    .hero-stat { display: flex; align-items: center; gap: 17px; padding: 23px; border: 1px solid #dae6f4; border-radius: var(--radius-lg); background: linear-gradient(145deg, #f2f7ff, #ffffff); box-shadow: 0 10px 30px rgba(52, 99, 158, .08); }
+    .stat-ring { width: 82px; height: 82px; display: grid; place-items: center; flex: 0 0 82px; border-radius: 50%; background: conic-gradient(var(--orange-500) 0deg, #dce8f5 0deg); position: relative; }
+    .stat-ring::after { width: 64px; height: 64px; position: absolute; content: ""; border-radius: 50%; background: white; }
+    .stat-ring strong { z-index: 1; color: var(--navy-900); font-size: 22px; }
+    .stat-copy { min-width: 0; }
+    .stat-copy strong { display: block; color: var(--navy-900); font-size: 14px; }
+    .stat-copy span { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; }
+
+    .panel { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow); }
+    .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding: 26px 28px 20px; border-bottom: 1px solid var(--line); }
+    .section-tag { display: inline-flex; align-items: center; gap: 6px; color: var(--blue-600); font-size: 11px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+    .section-tag::before { width: 7px; height: 7px; content: ""; border-radius: 2px; background: var(--blue-500); transform: rotate(45deg); }
+    h2 { margin: 7px 0 4px; color: var(--navy-900); font-size: 24px; line-height: 1.2; letter-spacing: -.035em; }
+    .panel-head p { margin: 0; color: var(--muted); font-size: 13px; }
+    .audio-box { min-width: min(100%, 350px); padding: 14px 15px 12px; border: 1px solid #e3eaf3; border-radius: 14px; background: #fbfcfe; }
+    .audio-label { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .audio-label span:last-child { color: #8a99aa; font-weight: 500; }
+    audio { width: 100%; height: 33px; }
+    .work-area { padding: 21px 28px 28px; }
+    .instruction-bar { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; padding: 13px 15px; color: #49627c; border: 1px solid #dfeafa; border-radius: 12px; background: #f6f9ff; font-size: 13px; }
+    .instruction-icon { width: 20px; height: 20px; display: grid; place-items: center; flex: 0 0 20px; color: #fff; border-radius: 50%; background: var(--blue-600); font-size: 12px; font-weight: 850; }
+    .grading-tip { display: inline-flex; align-items: center; flex: 0 0 auto; margin-left: auto; padding: 4px 8px; color: var(--green-600); border: 1px solid #bce4d5; border-radius: 999px; background: var(--green-100); font-size: 11px; font-weight: 750; white-space: nowrap; }
+    .prompt-guide { margin-bottom: 18px; padding: 14px 15px; border: 1px solid #f1dfc7; border-radius: 13px; background: linear-gradient(135deg, #fffaf4, #fffdf9); }
+    .guide-row { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 12px; align-items: start; color: #5b4c3c; font-size: 13px; line-height: 1.65; }
+    .guide-row + .guide-row { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #ecdcc8; }
+    .guide-label { color: #bf6b35; font-size: 11px; font-weight: 850; letter-spacing: .04em; }
+    .guide-example { color: #6e6255; }
+    .asset-preview { display: none; margin-bottom: 18px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: #fbfcfe; }
+    .asset-preview.visible { display: block; }
+    .asset-preview img { display: block; width: min(100%, 680px); max-height: 390px; margin: 0 auto; object-fit: contain; border-radius: 9px; }
+    .question-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .question-card { min-width: 0; padding: 15px 16px; border: 1px solid var(--line); border-radius: 14px; background: #fff; transition: border-color .18s ease, background .18s ease, box-shadow .18s ease; }
+    .question-card:hover { border-color: #cddcf0; box-shadow: 0 6px 18px rgba(31, 67, 106, .05); }
+    .question-card.correct { border-color: #9edcc8; background: var(--green-100); }
+    .question-card.incorrect { border-color: #efb4b4; background: var(--red-100); }
+    .q-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .q-number { width: 28px; height: 28px; display: grid; place-items: center; color: var(--navy-900); border-radius: 9px; background: var(--blue-100); font-size: 12px; font-weight: 850; }
+    .q-status { color: var(--muted); font-size: 11px; }
+    .q-status.correct { color: var(--green-600); font-weight: 800; }
+    .q-status.incorrect { color: var(--red-600); font-weight: 800; }
+    .prompt { color: #34465b; font-size: 13px; }
+    .prompt strong { color: var(--navy-900); }
+    .answer-input { width: 100%; min-height: 40px; padding: 9px 11px; color: var(--navy-900); border: 1px solid #ccd8e6; border-radius: 10px; background: #fff; font-size: 14px; transition: border .18s ease, box-shadow .18s ease; }
+    .answer-input::placeholder { color: #9dadbd; }
+    .answer-input:focus { border-color: var(--blue-500); box-shadow: 0 0 0 4px rgba(79, 142, 234, .12); outline: none; }
+    .answer-input.input-correct { color: var(--green-600); border-color: #82cfb6; background: #fbfffd; }
+    .answer-input.input-incorrect { color: var(--red-600); border-color: #e39c9c; background: #fffafa; }
+    .answer-note { display: none; margin-top: 8px; padding-top: 8px; color: #50677f; border-top: 1px dashed rgba(86, 118, 151, .22); font-size: 11px; }
+    .answer-note.visible { display: block; }
+    .answer-note b { color: var(--navy-900); }
+    .judge-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .judge-option { position: relative; }
+    .judge-option input { position: absolute; opacity: 0; pointer-events: none; }
+    .judge-option label { display: flex; align-items: center; justify-content: center; min-height: 40px; color: #5c6e83; border: 1px solid #d3deeb; border-radius: 10px; background: #fff; font-size: 13px; font-weight: 750; transition: all .18s ease; }
+    .judge-option label:hover { border-color: #9dbbe2; color: var(--blue-600); }
+    .judge-option input:checked + label { color: var(--blue-600); border-color: var(--blue-500); background: var(--blue-100); box-shadow: 0 0 0 3px rgba(79,142,234,.10); }
+    .judge-row.correct .judge-option input:checked + label { color: var(--green-600); border-color: #82cfb6; background: var(--green-100); }
+    .judge-row.incorrect .judge-option input:checked + label { color: var(--red-600); border-color: #e39c9c; background: var(--red-100); }
+    .dialogue-card { grid-column: 1 / -1; }
+    .dialogue { margin: 0 0 8px; color: #44586e; font-size: 13px; line-height: 2.15; }
+    .dialogue-line { display: block; }
+    .dialogue-line + .dialogue-line { margin-top: 1px; }
+    .dialogue-input { width: min(100%, 190px); min-height: 31px; margin: 0 4px; padding: 3px 8px; vertical-align: baseline; border: 0; border-bottom: 2px solid #aac0db; border-radius: 4px 4px 0 0; background: #f6f9fd; font-size: 13px; }
+    .dialogue-input:focus { border-bottom-color: var(--blue-500); outline: none; background: var(--blue-100); }
+    .dialogue-input.input-correct { color: var(--green-600); border-bottom-color: var(--green-600); background: var(--green-100); }
+    .dialogue-input.input-incorrect { color: var(--red-600); border-bottom-color: var(--red-600); background: var(--red-100); }
+    .panel-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 17px 28px; border-top: 1px solid var(--line); background: #fbfcfe; border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+    .foot-left, .foot-right { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
+    .primary-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 10px 16px; color: #fff; border: 0; border-radius: 11px; background: linear-gradient(135deg, var(--blue-600), #3c8ae8); box-shadow: 0 8px 18px rgba(45, 116, 216, .22); font-size: 13px; font-weight: 800; transition: transform .18s ease, box-shadow .18s ease; }
+    .primary-btn:hover { box-shadow: 0 11px 22px rgba(45, 116, 216, .3); transform: translateY(-1px); }
+    .secondary-btn { min-height: 42px; padding: 9px 13px; color: #52657a; border: 1px solid #d9e2ed; border-radius: 11px; background: #fff; font-size: 12px; font-weight: 750; }
+    .secondary-btn:hover { color: var(--blue-600); border-color: #b9cde5; }
+    .result { display: none; align-items: center; gap: 13px; margin-top: 20px; padding: 17px 19px; border: 1px solid #d5eadf; border-radius: 16px; background: linear-gradient(135deg, #f3fcf8, #fbfffd); }
+    .result.visible { display: flex; }
+    .result-mark { width: 40px; height: 40px; display: grid; place-items: center; flex: 0 0 40px; color: white; border-radius: 13px; background: var(--green-600); font-weight: 900; }
+    .result strong { display: block; color: var(--navy-900); font-size: 15px; }
+    .result span { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; }
+    .result-actions { margin-left: auto; display: flex; gap: 8px; }
+    .progress-strip { display: flex; align-items: center; gap: 12px; margin: 21px 0 0; }
+    .progress-track { height: 6px; flex: 1; overflow: hidden; border-radius: 999px; background: #e6edf5; }
+    .progress-fill { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--orange-500), #f2a45d); transition: width .3s ease; }
+    .progress-label { color: #718195; font-size: 11px; white-space: nowrap; }
+    .empty-state { padding: 60px 20px; text-align: center; color: var(--muted); }
+    .hidden { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @media (max-width: 980px) {
+      .sidebar { width: 260px; flex-basis: 260px; }
+      .main { padding: 24px 23px 42px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-stat { max-width: 420px; }
+    }
+    @media (max-width: 720px) {
+      .app-shell { display: block; }
+      .sidebar { position: relative; width: 100%; height: auto; max-height: 360px; overflow-y: auto; padding: 18px 16px 17px; }
+      .brand { padding-bottom: 16px; }
+      .side-kicker { display: none; }
+      .module-card { padding: 12px; }
+      .track-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 11px; }
+      .track-btn { padding: 8px 6px; gap: 7px; }
+      .track-copy strong { font-size: 11px; }
+      .track-copy small { font-size: 9px; }
+      .track-num { width: 23px; height: 23px; flex-basis: 23px; }
+      .track-state { display: none; }
+      .side-note { display: none; }
+      .main { padding: 21px 14px 36px; }
+      .topbar { align-items: flex-start; margin-bottom: 19px; }
+      .top-actions .pill { display: none; }
+      .hero { gap: 13px; margin-bottom: 16px; }
+      h1 { font-size: 31px; }
+      .hero-copy p { font-size: 13px; }
+      .hero-stat { padding: 17px; }
+      .instruction-bar { flex-wrap: wrap; }
+      .grading-tip { margin-left: 32px; }
+      .guide-row { grid-template-columns: 64px minmax(0, 1fr); gap: 9px; font-size: 12px; }
+      .panel-head { display: block; padding: 20px 18px 17px; }
+      h2 { font-size: 21px; }
+      .audio-box { min-width: 0; margin-top: 16px; }
+      .work-area { padding: 16px 14px 20px; }
+      .question-grid { grid-template-columns: 1fr; gap: 9px; }
+      .dialogue-card { grid-column: auto; }
+      .panel-foot { align-items: stretch; flex-direction: column; padding: 14px; }
+      .foot-left, .foot-right { justify-content: space-between; }
+      .result { align-items: flex-start; flex-wrap: wrap; }
+      .result-actions { width: 100%; margin-left: 53px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="专项练习导航">
+      <div class="brand">
+        <div class="brand-mark">IELTS</div>
+        <div>
+          <div class="brand-name">Emma's Listening Lab</div>
+          <div class="brand-sub">专项技能在线练习</div>
+        </div>
+      </div>
+      <div class="side-kicker">Skill library</div>
+      <div id="moduleList"></div>
+      <div class="side-note">
+        <strong>本版使用提示</strong>
+        每段音频可以重复播放。输入完成后点击“提交并批改”，系统会在本机保存进度。
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="crumb">Emma's Listening Lab <span>/</span> <b>Listening practice</b></div>
+        <div class="top-actions">
+          <div class="pill"><span class="pill-dot"></span> 本机进度已保存</div>
+          <button class="ghost-btn" id="resetAllBtn" type="button" title="清除本机保存的所有作答记录">↺ 重置进度</button>
+        </div>
+      </div>
+
+      <section class="hero" aria-labelledby="pageTitle">
+        <div class="hero-copy">
+          <div class="eyebrow">IELTS LISTENING · SKILL LIBRARY</div>
+          <h1 id="pageTitle">拼写练习</h1>
+          <p id="heroDescription">从字母、数字到数字与字母组合，训练你在听力中快速识别、准确记录关键信息的能力。</p>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-ring" id="overallRing"><strong id="overallPercent">0%</strong></div>
+          <div class="stat-copy">
+            <strong>模块完成度</strong>
+            <span id="overallText">0 / 9 个练习已完成</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="trackTitle">
+        <div class="panel-head">
+          <div>
+            <div class="section-tag" id="trackKicker">LETTER PRACTICE · 1.1</div>
+            <h2 id="trackTitle">字母练习 · 听写</h2>
+            <p id="trackMeta">20 题 · 听到后写出对应内容</p>
+          </div>
+          <div class="audio-box">
+            <div class="audio-label"><span>配套音频</span><span id="audioMeta">可重复播放</span></div>
+            <audio id="audioPlayer" controls preload="metadata"></audio>
+          </div>
+        </div>
+        <div class="work-area">
+          <div class="instruction-bar"><span class="instruction-icon">i</span><span id="instructionText">先听音频，再按下方提示填写答案。</span><span class="grading-tip">大小写不影响判分</span></div>
+          <div class="prompt-guide" id="promptGuide">
+            <div class="guide-row"><span class="guide-label">填写提示</span><span id="promptGuideText"></span></div>
+            <div class="guide-row guide-example" id="exampleRow"><span class="guide-label">填写示例</span><span id="exampleText"></span></div>
+          </div>
+          <div class="asset-preview" id="assetPreview"></div>
+          <div class="question-grid" id="questionGrid"></div>
+          <div class="result" id="resultBox" role="status" aria-live="polite">
+            <div class="result-mark">✓</div>
+            <div><strong id="resultTitle">已完成批改</strong><span id="resultSub"></span></div>
+            <div class="result-actions"><button class="secondary-btn" id="wrongOnlyBtn" type="button">只看错题</button><button class="secondary-btn" id="answerBtn" type="button">显示答案</button></div>
+          </div>
+          <div class="progress-strip"><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="progress-label" id="progressLabel">已作答 0 / 20</div></div>
+        </div>
+        <div class="panel-foot">
+          <div class="foot-left">
+            <button class="secondary-btn" id="prevBtn" type="button">← 上一组</button>
+            <button class="secondary-btn" id="nextBtn" type="button">下一组 →</button>
+          </div>
+          <div class="foot-right">
+            <button class="secondary-btn" id="clearTrackBtn" type="button">清空本组</button>
+            <button class="primary-btn" id="gradeBtn" type="button">提交并批改 <span>↗</span></button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="content.js"></script>
+  <script>
+    const tracks = [
+      {
+        id: 'letter-1-1',
+        code: 'LETTER PRACTICE · 1.1',
+        title: '字母练习 · 听写',
+        meta: '20 题 · 听到后写出对应内容',
+        instruction: '请播放音频，将与听力一致的内容写在横线上。大小写不影响判分。',
+        audio: 'audio/01-letter-1-1.mp3',
+        type: 'text',
+        answers: ['Holland', 'Tamer', 'Sable', 'Panter', 'Yuichini', 'Keiko', 'Urwin', 'Anu', 'Bhatt', 'Ludlow', 'Eshcol', 'Ardleigh', 'Pargetter', 'Buckleigh', 'Ratchesons', 'Cawley', 'Angela', 'Eustatis', 'Dannis', 'Amber']
+      },
+      {
+        id: 'letter-1-2',
+        code: 'LETTER PRACTICE · 1.2',
+        title: '字母练习 · 进阶听写',
+        meta: '20 题 · 听到后写出对应内容',
+        instruction: '请播放音频，将与听力一致的内容写在横线上。遇到不确定的拼写，可以先记录声音再回听。',
+        audio: 'audio/02-letter-1-2.mp3',
+        type: 'text',
+        answers: ['Pallisades', 'Grantingham', 'Harris', 'Kynchley', 'Advance', 'Thomson', 'Milperra', 'Manuja', 'Gomley', 'Hardie', 'Bythwaite', 'Handsworth', 'Arbuthnot', 'Arretsa', 'Jerriz', 'Tesla', 'Hillsdunne', 'Sunshade', 'Dannis', 'Wombat']
+      },
+      {
+        id: 'letter-1-3',
+        code: 'LETTER PRACTICE · 1.3',
+        title: '字母练习 · 问答听写',
+        meta: '20 题 · 根据听力对话完成答案',
+        instruction: '请根据听力对话，将问题对应的答案写完整。',
+        audio: 'audio/03-letter-1-3.mp3',
+        type: 'text',
+        prompts: ['What is the hotel name?', 'Who do I need to speak to?', 'What is your full name?', 'Can you spell the place name?', 'Where did we win the award?', 'Where will the training sessions be held?', 'Where are you heading to?', 'Who is speaking?', 'Where is the hotel?', 'Who will send me the parcel?', 'Who is my son’s best friend?', 'What is your surname?', 'Where can you afford to go?', 'What is the street name?', 'Where does your sister live?', 'How do you spell your name?', 'Where were you born?', 'Where do you live now?', 'What is your full name?', 'How do you spell your last name?'],
+        answers: ['Alton', 'Staunfirth', 'Wennie', 'Riverside', 'Bangkok', 'Atlanta', 'Nepal', 'Samantha', 'Elizabeth Street', 'Heather', 'Benjamin', 'Dublin', 'Mardin', 'Smithfield', 'Ealing', 'Stephen', 'Adelaide', 'Greenwich', 'Terry Fisher', 'Abel']
+      },
+      {
+        id: 'number-2-1',
+        code: 'NUMBER PRACTICE · 2.1',
+        title: '数字练习 · 判断正误',
+        meta: '20 题 · 判断听到的数字是否正确',
+        instruction: '请播放音频，判断题目中给出的数字是否与听力一致。',
+        audio: 'audio/04-number-2-1.mp3',
+        type: 'judge',
+        prompts: ['7', '17', '80', '4,465', '35', '45', '1,450', '2,000', '27051943', '01078', '9', '90', '12 3303 40', '7th', '68', '930', '913', '22nd', '1990', '1990'],
+        answers: ['correct', 'incorrect', 'incorrect', 'correct', 'correct', 'correct', 'incorrect', 'correct', 'correct', 'correct', 'correct', 'incorrect', 'incorrect', 'correct', 'correct', 'incorrect', 'correct', 'correct', 'correct', 'incorrect']
+      },
+      {
+        id: 'number-2-2',
+        code: 'NUMBER PRACTICE · 2.2',
+        title: '数字练习 · 听写',
+        meta: '20 题 · 根据听力填写数字',
+        instruction: '请根据听力，将听到的数字填写完整。数字之间可以保留空格或逗号。',
+        audio: 'audio/05-number-2-2.mp3',
+        type: 'text',
+        answers: ['1,450', '2,800', '450,380', '133 444 689', '125,378,980', '9905 695', '1880', '15', '55th', '678 945 012', '910 457 80', '18 9567 05', '501,000', '5,789,010', '75,870', '012 33785', '4048', '1440', '2013', '6880']
+      },
+      {
+        id: 'number-2-3',
+        code: 'NUMBER PRACTICE · 2.3',
+        title: '数字练习 · 综合听写',
+        meta: '20 题 · 日期、时间、价格与号码',
+        instruction: '请根据听力，将听到的数字、日期、时间或号码填写完整。',
+        audio: 'audio/06-number-2-3.mp3',
+        type: 'text',
+        answers: ['75,000', '14', '40', '3303 8450 2045 6837', '9.30', '22nd', '4.30', '135', '23.70', '500', '19th', '616295', '8659', '2000', '01674 553242', '12,000', '4.5', '4.45', '3345 9865', '136711']
+      },
+      {
+        id: 'mixed-3-1',
+        code: 'MIXED PRACTICE · 3.1',
+        title: '数字和字母 · 判断正误',
+        meta: '20 题 · 判断听到的组合是否正确',
+        instruction: '请播放音频，判断题目中给出的数字、字母组合是否与听力一致。',
+        audio: 'audio/07-mixed-3-1.mp3',
+        type: 'judge',
+        prompts: ['March 22nd', '70TT', '17DC', '90th', 'W567UB', '45LI', 'RL', '5DV', '60A', '68A', '6', '19', '12 W3O3 4O', 'W465', '60A', '930', '913', '22nd', '1990', '1918'],
+        answers: ['correct', 'incorrect', 'incorrect', 'incorrect', 'incorrect', 'incorrect', 'incorrect', 'incorrect', 'correct', 'correct', 'incorrect', 'correct', 'incorrect', 'incorrect', 'incorrect', 'correct', 'correct', 'correct', 'correct', 'correct']
+      },
+      {
+        id: 'mixed-3-2',
+        code: 'MIXED PRACTICE · 3.2',
+        title: '数字和字母 · 混合听写',
+        meta: '20 题 · 根据听力填写字母数字组合',
+        instruction: '请根据听力，将听到的字母、数字或地址信息填写完整。',
+        audio: 'audio/08-mixed-3-2.mp3',
+        type: 'text',
+        answers: ['GT8 2LC', '46 Wombat', 'CVA 07788 136711', 'DG7 4PH', '8795482361 XZ', '50 Staunfirth', '365241TD', 'PTOERL98', 'EC328', 'TR 15 30', 'OA5946', 'BA12670', '30 Broadway SE40', '207334478UV', 'WDT34', 'ALA 367BP', 'Sussex BD2 1GJ', 'GG BN 91', '5EF HLL 3A', '3065']
+      },
+      {
+        id: 'mixed-3-3',
+        code: 'MIXED PRACTICE · 3.3',
+        title: '数字和字母 · 对话听写',
+        meta: '20 题 · 根据完整对话填写信息',
+        instruction: '请根据听力对话，完成下面的填空。每个空格只对应一个答案。',
+        audio: 'audio/09-mixed-3-3.mp3',
+        type: 'dialogue',
+        dialogues: [
+          { text: 'Is that Miss Jones?\nYes. How can I help you?\nI’d like to talk to the lady whose ID is {{0}} about yesterday’s delivery.', answers: ['9780A'] },
+          { text: 'Hello, this is Betty speaking.\nHi. How can I help you?\nI want to track my parcel. The number is {{0}}.', answers: ['20T1644O'] },
+          { text: 'Who do you wish to speak to?\n{{0}}, please. His line would be {{1}}. Could you put me through?\nYes, after the beep.', answers: ['Dr. Robinson', '7795380'] },
+          { text: 'May I have your full name please?\nSure. {{0}}.', answers: ['Egg Casting'] },
+          { text: 'My new address is {{0}}.\nOk. What is your postcode?\n{{1}}.', answers: ['60A Smithfield Road', '899 WTD'] },
+          { text: 'I’m currently living in the school dorm.\nNo problem. I can still send the envelope. Tell me the postcode.\n{{0}}.', answers: ['BNM 019 AL'] },
+          { text: 'What is your home address again?\n{{0}}. Oh wait, that’s my parent’s house. My address is {{1}}.', answers: ['Man Street', '19 Hills Road'] },
+          { text: 'Could you tell me his address?\nIt’s {{0}}.', answers: ['1880 Grestone Road'] },
+          { text: 'I want to send a surprise birthday gift to her. Do you know her address?\nThe postcode is {{0}}. Address is {{1}}.', answers: ['PTX 413', '9320 Beach Road'] },
+          { text: 'That’s all for today.\nCool. If you have anything else, call {{0}}. And my ID is {{1}}.', answers: ['40228795', 'NN6578'] },
+          { text: 'Where do you live now?\nI live at {{0}}.', answers: ['90 Crew street CX7'] },
+          { text: 'What’s your name?\nIt’s {{0}}.\nMr. Gill, how can I help you?\nI am wondering if you can book the ticket on {{1}}.', answers: ['Turnball Gill', 'February 21st'] },
+          { text: 'Where are you from?\n{{0}}.\nI see. May I have your specific home address?\n{{1}}.', answers: ['London', '50 Hardcourt Lane B19'] },
+          { text: 'When is your next lecture?\nLet me check my timetable. Um…{{0}}.', answers: ['Friday. January 17th'] },
+          { text: 'When is your train?\nIt says {{0}} on {{1}}.', answers: ['2.40 pm', 'Platform 2'] },
+          { text: 'Can you check the Flight {{0}}?\nIt will depart at {{1}}.', answers: ['CX591', '5.40pm'] },
+          { text: 'Hello, I want to change my flight.\nCertainly. Tell me your flight number and I’ll check other available time.\nFlight {{0}}.', answers: ['TD 1599'] },
+          { text: 'I want to renew my membership.\nWhat is your membership ID?\n{{0}}.', answers: ['GJ 64379016777162 H'] },
+          { text: 'I need your personal information. Could you tell me your name and address?\nIt’s {{0}}. I will move to the new place recently.\nThat’s fine. Tell me your new address.\n{{1}}.', answers: ['Georcle Neill', '48 North Avenue, Westsea'] },
+          { text: 'What is your new postcode?\n{{0}}.', answers: ['WS62YH'] }
+        ]
+      }
+    ];
+    if (window.EXTRA_TRACKS) tracks.push(...window.EXTRA_TRACKS);
+
+    const baseGuidance = {
+      'LETTER PRACTICE · 1.1': {
+        instruction: '请播放音频，将听到的字母或拼写内容写在横线上。听到的是逐个字母时，请按正常单词拼写填写。',
+        example: '如听到 H-O-L-L-A-N-D，可填写 Holland、holland 或 HOLLAND。'
+      },
+      'LETTER PRACTICE · 1.2': {
+        instruction: '请播放音频，写出听到的较长名称或单词拼写；每个题目填写一个完整答案。',
+        example: '如听到 P-A-L-L-I-S-A-D-E-S，可填写 Pallisades。'
+      },
+      'LETTER PRACTICE · 1.3': {
+        instruction: '请根据听力对话，把对方拼出的姓名、地点、机构或其他信息完整写入空格。',
+        example: '题目问酒店名称，录音拼出 A-L-T-O-N 时，填写 Alton。'
+      },
+      'NUMBER PRACTICE · 2.1': {
+        instruction: '请判断题目中给出的数字是否与录音一致：一致选择“正确”，不一致选择“错误”。',
+        example: '题目显示 7，录音也听到 7 → 选择“正确”；录音听到 8 → 选择“错误”。'
+      },
+      'NUMBER PRACTICE · 2.2': {
+        instruction: '请听录音，填写听到的完整数字。数字中的空格、逗号和大小写不会影响判分。',
+        example: '听到 one thousand four hundred and fifty，可填写 1,450 或 1450。'
+      },
+      'NUMBER PRACTICE · 2.3': {
+        instruction: '请听录音，填写日期、时间、价格、电话号码或其他数字信息；按录音写完整。',
+        example: '如日期可填写 22nd，时间可填写 4.30，价格可填写 23.70。'
+      },
+      'MIXED PRACTICE · 3.1': {
+        instruction: '请判断题目给出的数字与字母组合是否和录音一致：一致选择“正确”，不一致选择“错误”。',
+        example: '题目显示 60A，录音听到 60A → 选择“正确”；听到其他组合 → 选择“错误”。'
+      },
+      'MIXED PRACTICE · 3.2': {
+        instruction: '请听录音，把听到的字母、数字、街道名称或地址信息完整填写在空格中。',
+        example: '如录音听到 G-T-8、2-L-C，可填写 GT8 2LC。'
+      },
+      'MIXED PRACTICE · 3.3': {
+        instruction: '请根据完整对话，填写每个空格所对应的姓名、地址、编号、日期或时间；一个空格对应一个答案。',
+        example: 'Flight ______ → CX591；It will depart at ______ → 5.40pm。'
+      }
+    };
+    tracks.forEach((track) => {
+      const guide = baseGuidance[track.code];
+      if (guide) Object.assign(track, guide);
+    });
+
+    const STORAGE_KEY = 'ielts-spelling-mvp-v1';
+    const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"answers":{},"results":{},"times":{}}');
+    let activeIndex = 0;
+    let showAnswers = false;
+    let wrongOnly = false;
+    let timerHandle;
+
+    const $ = (selector) => document.querySelector(selector);
+    const moduleList = $('#moduleList');
+    const questionGrid = $('#questionGrid');
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      updateOverallProgress();
+    }
+
+    function normalize(value) {
+      return String(value ?? '').normalize('NFKC').toLocaleLowerCase('en-US').replace(/[’‘'"“”.,，、/\\()\-\s]/g, '').trim();
+    }
+
+    function isCorrect(value, expected) {
+      const candidates = Array.isArray(expected) ? expected : [expected];
+      return candidates.some((candidate) => normalize(value) === normalize(candidate));
+    }
+
+    function hasMultipleFields(track) {
+      return track.type === 'dialogue' || track.type === 'multi';
+    }
+
+    function itemList(track) {
+      return track.type === 'dialogue' ? track.dialogues : track.items;
+    }
+
+    function answeredCount(track) {
+      const saved = state.answers[track.id] || [];
+      if (hasMultipleFields(track)) return saved.flat().filter((value) => String(value || '').trim()).length;
+      return saved.filter((value) => String(value || '').trim()).length;
+    }
+
+    function totalFields(track) {
+      if (hasMultipleFields(track)) return itemList(track).reduce((sum, item) => sum + item.answers.length, 0);
+      return track.answers.length;
+    }
+
+    function getSavedAnswer(track, itemIndex, fieldIndex = 0) {
+      const saved = state.answers[track.id] || [];
+      if (hasMultipleFields(track)) return saved[itemIndex]?.[fieldIndex] || '';
+      return saved[itemIndex] || '';
+    }
+
+    function saveCurrentAnswers() {
+      const track = tracks[activeIndex];
+      const answers = [];
+      if (hasMultipleFields(track)) {
+        itemList(track).forEach((item, itemIndex) => {
+          answers[itemIndex] = item.answers.map((_, fieldIndex) => {
+            const input = questionGrid.querySelector(`[data-item="${itemIndex}"][data-field="${fieldIndex}"]`);
+            return input ? input.value : '';
+          });
+        });
+      } else {
+        track.answers.forEach((_, itemIndex) => {
+          if (track.type === 'judge' || track.type === 'choice') {
+            const selected = questionGrid.querySelector(`input[name="${track.type}-${track.id}-${itemIndex}"]:checked`);
+            answers[itemIndex] = selected ? selected.value : '';
+          } else {
+            const input = questionGrid.querySelector(`input.answer-input[data-item="${itemIndex}"]`);
+            answers[itemIndex] = input ? input.value : '';
+          }
+        });
+      }
+      state.answers[track.id] = answers;
+      saveState();
+    }
+
+    function renderNavigation() {
+      const moduleDescriptionMap = {
+        '拼写练习': 'Letters · Numbers · Alphanumeric',
+        '方位词': 'Directions · Maps · Locations',
+        '句子结构': 'Passive voice · Parallel information · Sentence patterns',
+        '信号词': 'Negation · Reference · Contrast · Cause and effect',
+        '同义替换': 'Word families · Synonyms · Hypernyms',
+        '发音特质': 'Stress · Weak forms · Linking · Attitude',
+        '常见口音': 'Indian · Japanese · Australian · UK/US accents'
+      };
+      const groups = [];
+      const byModule = new Map();
+      tracks.forEach((track, index) => {
+        const moduleName = track.module || '拼写练习';
+        if (!byModule.has(moduleName)) {
+          const group = { name: moduleName, items: [], description: track.moduleDescription || moduleDescriptionMap[moduleName] || '听力专项技能训练' };
+          byModule.set(moduleName, group);
+          groups.push(group);
+        }
+        byModule.get(moduleName).items.push({ track, index });
+      });
+      moduleList.innerHTML = groups.map((group) => `<section class="module-card ${group.items.some((item) => item.index === activeIndex) ? 'active' : ''}">
+        <div class="module-row"><div class="module-title">${escapeHtml(group.name)}</div><div class="module-count">${group.items.length} 练习</div></div>
+        <p class="module-desc">${escapeHtml(group.description)}</p>
+        <nav class="track-list">${group.items.map(({ track, index }) => {
+          const result = state.results[track.id];
+          const done = result && result.graded;
+          return `<button class="track-btn ${index === activeIndex ? 'active' : ''}" data-index="${index}" type="button">
+            <span class="track-num">${String(index + 1).padStart(2, '0')}</span>
+            <span class="track-copy"><strong>${escapeHtml(track.title.replace(' · ', ' / '))}</strong><small>${escapeHtml(track.meta.split(' · ')[0])}</small></span>
+            <span class="track-state ${done ? 'done' : ''}" aria-label="${done ? '已完成' : '未完成'}"></span>
+          </button>`;
+        }).join('')}</nav>
+      </section>`).join('');
+      moduleList.querySelectorAll('.track-btn').forEach((button) => {
+        button.addEventListener('click', () => switchTrack(Number(button.dataset.index)));
+      });
+    }
+
+    function renderPromptText(text, itemIndex) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'dialogue';
+      text.split('\n').forEach((line, lineIndex) => {
+        const lineEl = document.createElement('span');
+        lineEl.className = 'dialogue-line';
+        const parts = line.split(/(\{\{\d+\}\})/g);
+        parts.forEach((part) => {
+          const match = part.match(/^\{\{(\d+)\}\}$/);
+          if (match) {
+            const fieldIndex = Number(match[1]);
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'dialogue-input';
+            input.placeholder = '听后填写';
+            input.autocomplete = 'off';
+            input.dataset.item = itemIndex;
+            input.dataset.field = fieldIndex;
+            input.value = getSavedAnswer(tracks[activeIndex], itemIndex, fieldIndex);
+            input.addEventListener('input', saveCurrentAnswers);
+            lineEl.appendChild(input);
+          } else {
+            lineEl.appendChild(document.createTextNode(part));
+          }
+        });
+        wrapper.appendChild(lineEl);
+      });
+      return wrapper;
+    }
+
+    function renderMultiPrompt(item, itemIndex) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'prompt multi-prompt';
+      wrapper.appendChild(document.createTextNode(item.prompt || `第 ${itemIndex + 1} 题`));
+      item.answers.forEach((_, fieldIndex) => {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'dialogue-input';
+        input.placeholder = `第 ${fieldIndex + 1} 空`;
+        input.autocomplete = 'off';
+        input.dataset.item = itemIndex;
+        input.dataset.field = fieldIndex;
+        input.value = getSavedAnswer(tracks[activeIndex], itemIndex, fieldIndex);
+        input.addEventListener('input', saveCurrentAnswers);
+        wrapper.appendChild(input);
+      });
+      return wrapper;
+    }
+
+    function renderQuestions() {
+      const track = tracks[activeIndex];
+      questionGrid.innerHTML = '';
+      showAnswers = false;
+      wrongOnly = false;
+      $('#answerBtn').textContent = '显示答案';
+      $('#wrongOnlyBtn').textContent = '只看错题';
+      const result = state.results[track.id];
+      if (hasMultipleFields(track)) {
+        itemList(track).forEach((item, itemIndex) => {
+          const card = document.createElement('article');
+          card.className = `question-card ${track.type === 'dialogue' ? 'dialogue-card' : ''}`;
+          card.dataset.item = itemIndex;
+          card.innerHTML = `<div class="q-top"><span class="q-number">${itemIndex + 1}</span><span class="q-status">${item.answers.length} 个空</span></div>`;
+          card.appendChild(track.type === 'dialogue' ? renderPromptText(item.text, itemIndex) : renderMultiPrompt(item, itemIndex));
+          const note = document.createElement('div');
+          note.className = 'answer-note';
+          note.dataset.note = itemIndex;
+          note.innerHTML = `<b>参考答案：</b>${item.answers.map((answer) => escapeHtml(answer)).join(' / ')}`;
+          card.appendChild(note);
+          questionGrid.appendChild(card);
+        });
+      } else {
+        track.answers.forEach((answer, itemIndex) => {
+          const card = document.createElement('article');
+          card.className = 'question-card';
+          card.dataset.item = itemIndex;
+          const prompt = track.prompts?.[itemIndex];
+          card.innerHTML = `<div class="q-top"><span class="q-number">${itemIndex + 1}</span><span class="q-status">待作答</span></div>`;
+          if (track.type === 'judge' || track.type === 'choice') {
+            const promptEl = document.createElement('div');
+            promptEl.className = 'prompt';
+            promptEl.innerHTML = `题目内容：<strong>${escapeHtml(prompt)}</strong>`;
+            card.appendChild(promptEl);
+            const options = document.createElement('div');
+            options.className = 'judge-options';
+            const current = getSavedAnswer(track, itemIndex);
+            const optionValues = track.type === 'judge' ? ['correct', 'incorrect'] : track.options;
+            const optionLabels = track.type === 'judge' ? ['✓ 正确', '× 错误'] : track.options;
+            options.innerHTML = optionValues.map((value, optionIndex) => {
+              const optionId = `${track.type}-${track.id}-${itemIndex}-${optionIndex}`;
+              return `<div class="judge-option"><input id="${optionId}" type="radio" name="${track.type}-${track.id}-${itemIndex}" value="${escapeHtml(value)}" ${current === value ? 'checked' : ''}><label for="${optionId}">${escapeHtml(optionLabels[optionIndex])}</label></div>`;
+            }).join('');
+            card.appendChild(options);
+            options.querySelectorAll('input').forEach((input) => input.addEventListener('change', saveCurrentAnswers));
+          } else {
+            if (prompt) {
+              const promptEl = document.createElement('div');
+              promptEl.className = 'prompt';
+              promptEl.textContent = prompt;
+              card.appendChild(promptEl);
+            }
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'answer-input';
+            input.placeholder = '听后填写答案';
+            input.autocomplete = 'off';
+            input.dataset.item = itemIndex;
+            input.value = getSavedAnswer(track, itemIndex);
+            input.addEventListener('input', saveCurrentAnswers);
+            card.appendChild(input);
+          }
+          const note = document.createElement('div');
+          note.className = 'answer-note';
+          note.dataset.note = itemIndex;
+          note.innerHTML = `<b>参考答案：</b>${escapeHtml(answer)}`;
+          card.appendChild(note);
+          questionGrid.appendChild(card);
+        });
+      }
+      if (result?.graded) applyResult(result);
+      updateProgress();
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+    }
+
+    function applyResult(result) {
+      const track = tracks[activeIndex];
+      const cards = [...questionGrid.querySelectorAll('.question-card')];
+      cards.forEach((card, itemIndex) => {
+        const checks = result.itemResults?.[itemIndex] || [];
+        const itemCorrect = checks.length > 0 && checks.every(Boolean);
+        card.classList.toggle('correct', itemCorrect);
+        card.classList.toggle('incorrect', !itemCorrect);
+        const status = card.querySelector('.q-status');
+        if (status) {
+          status.textContent = itemCorrect ? '✓ 正确' : '× 再听一次';
+          status.className = `q-status ${itemCorrect ? 'correct' : 'incorrect'}`;
+        }
+        const inputs = card.querySelectorAll('input');
+        inputs.forEach((input, fieldIndex) => {
+          const check = checks[fieldIndex];
+          if (input.type !== 'radio') input.classList.toggle('input-correct', check === true);
+          if (input.type !== 'radio') input.classList.toggle('input-incorrect', check === false);
+        });
+        if (hasMultipleFields(track)) {
+          const inputsByField = [...card.querySelectorAll('input')];
+          inputsByField.forEach((input, fieldIndex) => {
+            input.classList.toggle('input-correct', checks[fieldIndex] === true);
+            input.classList.toggle('input-incorrect', checks[fieldIndex] === false);
+          });
+        }
+      });
+      $('#resultBox').classList.add('visible');
+      $('#resultTitle').textContent = `本组得分 ${result.score} 分`;
+      $('#resultSub').textContent = `答对 ${result.correct} / ${result.total} 个空 · 可以回听音频后再次提交`;
+      updateAnswerVisibility();
+      updateWrongVisibility();
+    }
+
+    function gradeTrack() {
+      saveCurrentAnswers();
+      const track = tracks[activeIndex];
+      if (track.autoGrade === false) {
+        $('#resultBox').classList.add('visible');
+        $('#resultTitle').textContent = '本组答案已保存';
+        $('#resultSub').textContent = '本题需要结合重音、弱读、连读或语气人工核对；请点击“显示答案”查看参考内容。';
+        updateAnswerVisibility();
+        return;
+      }
+      const saved = state.answers[track.id] || [];
+      const itemResults = [];
+      let correct = 0;
+      let total = 0;
+      if (hasMultipleFields(track)) {
+        itemList(track).forEach((item, itemIndex) => {
+          const checks = item.answers.map((expected, fieldIndex) => {
+            total += 1;
+            const ok = isCorrect(saved[itemIndex]?.[fieldIndex], expected);
+            if (ok) correct += 1;
+            return ok;
+          });
+          itemResults.push(checks);
+        });
+      } else {
+        track.answers.forEach((expected, itemIndex) => {
+          total += 1;
+          const ok = track.type === 'judge' || track.type === 'choice' ? saved[itemIndex] === expected : isCorrect(saved[itemIndex], expected);
+          if (ok) correct += 1;
+          itemResults.push([ok]);
+        });
+      }
+      const result = { graded: true, correct, total, score: Math.round((correct / total) * 100), itemResults, at: Date.now() };
+      state.results[track.id] = result;
+      saveState();
+      renderNavigation();
+      applyResult(result);
+      updateOverallProgress();
+    }
+
+    function updateAnswerVisibility() {
+      questionGrid.querySelectorAll('.answer-note').forEach((note) => note.classList.toggle('visible', showAnswers));
+      $('#answerBtn').textContent = showAnswers ? '隐藏答案' : '显示答案';
+    }
+
+    function updateWrongVisibility() {
+      const result = state.results[tracks[activeIndex].id];
+      questionGrid.querySelectorAll('.question-card').forEach((card, index) => {
+        const checks = result?.itemResults?.[index] || [];
+        const ok = checks.length > 0 && checks.every(Boolean);
+        card.classList.toggle('hidden', wrongOnly && ok);
+      });
+      $('#wrongOnlyBtn').textContent = wrongOnly ? '显示全部题目' : '只看错题';
+    }
+
+    function updateProgress() {
+      const track = tracks[activeIndex];
+      const count = answeredCount(track);
+      const total = totalFields(track);
+      $('#progressFill').style.width = `${Math.round((count / total) * 100)}%`;
+      $('#progressLabel').textContent = `已作答 ${count} / ${total}`;
+    }
+
+    function updateOverallProgress() {
+      const finished = tracks.filter((track) => state.results[track.id]?.graded).length;
+      const percent = Math.round((finished / tracks.length) * 100);
+      $('#overallPercent').textContent = `${percent}%`;
+      $('#overallText').textContent = `${finished} / ${tracks.length} 个练习已完成`;
+      $('#overallRing').style.background = `conic-gradient(var(--orange-500) ${percent * 3.6}deg, #dce8f5 ${percent * 3.6}deg)`;
+    }
+
+    function updateTimer() {
+      const track = tracks[activeIndex];
+      if (!state.times[track.id]) state.times[track.id] = Date.now();
+      const elapsed = Math.floor((Date.now() - state.times[track.id]) / 1000);
+      const minutes = Math.floor(elapsed / 60);
+      const seconds = String(elapsed % 60).padStart(2, '0');
+      $('#audioMeta').textContent = `本组用时 ${minutes}:${seconds}`;
+    }
+
+    function switchTrack(index) {
+      saveCurrentAnswers();
+      activeIndex = Math.max(0, Math.min(tracks.length - 1, index));
+      const track = tracks[activeIndex];
+      if (!state.times[track.id]) state.times[track.id] = Date.now();
+      $('#pageTitle').textContent = track.module || '拼写练习';
+      $('#heroDescription').textContent = track.moduleDescription || '以音频为核心，训练雅思听力中的专项识别、记录和理解能力。';
+      $('#trackKicker').textContent = track.code;
+      $('#trackTitle').textContent = track.title;
+      $('#trackMeta').textContent = track.meta;
+      $('#instructionText').textContent = '先听音频，再按下方提示填写答案。';
+      $('#promptGuideText').textContent = track.instruction || '请根据音频和题目内容作答。';
+      const exampleRow = $('#exampleRow');
+      if (track.example) {
+        $('#exampleText').textContent = track.example;
+        exampleRow.classList.remove('hidden');
+      } else {
+        $('#exampleText').textContent = '本组没有单独示例，请以题干和音频为准。';
+        exampleRow.classList.remove('hidden');
+      }
+      $('#audioPlayer').src = track.audio;
+      $('#audioPlayer').load();
+      const assetPreview = $('#assetPreview');
+      if (track.image) {
+        assetPreview.innerHTML = `<img src="${escapeHtml(track.image)}" alt="题目图片" />`;
+        assetPreview.classList.add('visible');
+      } else {
+        assetPreview.innerHTML = '';
+        assetPreview.classList.remove('visible');
+      }
+      $('#resultBox').classList.remove('visible');
+      renderNavigation();
+      renderQuestions();
+      $('#prevBtn').disabled = activeIndex === 0;
+      $('#nextBtn').disabled = activeIndex === tracks.length - 1;
+      clearInterval(timerHandle);
+      timerHandle = setInterval(updateTimer, 1000);
+      updateTimer();
+    }
+
+    $('#gradeBtn').addEventListener('click', gradeTrack);
+    $('#answerBtn').addEventListener('click', () => { showAnswers = !showAnswers; updateAnswerVisibility(); });
+    $('#wrongOnlyBtn').addEventListener('click', () => { wrongOnly = !wrongOnly; updateWrongVisibility(); });
+    $('#prevBtn').addEventListener('click', () => switchTrack(activeIndex - 1));
+    $('#nextBtn').addEventListener('click', () => switchTrack(activeIndex + 1));
+    $('#clearTrackBtn').addEventListener('click', () => {
+      const track = tracks[activeIndex];
+      delete state.answers[track.id];
+      delete state.results[track.id];
+      saveState();
+      renderNavigation();
+      renderQuestions();
+    });
+    $('#resetAllBtn').addEventListener('click', () => {
+      if (!confirm('确定要清除所有练习的本机作答记录吗？')) return;
+      state.answers = {};
+      state.results = {};
+      state.times = {};
+      saveState();
+      renderNavigation();
+      renderQuestions();
+    });
+
+    switchTrack(0);
+    updateOverallProgress();
+  </script>
+</body>
+</html>
