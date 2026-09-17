@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#3157d5">
+  <title>雅思听力场景词汇 · British English 点读与听写</title>
+  <link rel="stylesheet" href="./styles.css?v=2">
+</head>
+<body>
+  <header class="topbar">
+    <button id="homeBtn" class="icon-button home-button" type="button" title="返回目录" aria-label="返回目录">⌂</button>
+    <div class="brand">
+      <p class="eyebrow">IELTS LISTENING VOCABULARY</p>
+      <h1 id="pageTitle">雅思听力场景词汇 · British English 点读与听写</h1>
+    </div>
+    <div id="headerMeta" class="header-meta">1,014 words</div>
+  </header>
+
+  <main>
+    <section id="homeView">
+      <section class="home-intro">
+        <div class="intro-copy">
+          <p class="eyebrow">Click Reader + Typing Check</p>
+          <h2>先点读背词，再听音频写拼写。</h2>
+          <p>每个词条都配有本地 British English 英式发音。普通背词时点击单词即可播放；进入盲听后，听完在输入框里敲出英文，系统会自动判定并支持星标复习。</p>
+          <div class="intro-chips">
+            <span>无需登录</span><span>星标自动保存</span><span>支持手机与电脑</span>
+          </div>
+        </div>
+        <div class="intro-stat-card">
+          <span class="stat-kicker">本套词汇</span>
+          <strong id="introTotalWords">1,014</strong>
+          <span>个听力高频词与短语</span>
+        </div>
+      </section>
+
+      <section class="overview-strip" aria-label="内容概览">
+        <div><strong id="overviewDays">6</strong><span>学习场景</span></div>
+        <div><strong id="overviewPages">26</strong><span>词汇页</span></div>
+        <div><strong>UK</strong><span>British English 音频</span></div>
+        <div><strong>2s</strong><span>顺序播放间隔</span></div>
+      </section>
+
+      <section class="selector-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Scenario plan</p>
+            <h2>选择场景</h2>
+          </div>
+          <p class="section-note">按场景一至场景六编排</p>
+        </div>
+        <div id="bookGrid" class="day-grid"></div>
+        <div id="unitPicker" class="unit-picker" hidden>
+          <div class="picker-heading">
+            <button id="backToDaysBtn" class="text-button" type="button">← 全部场景</button>
+            <div>
+              <p class="eyebrow">Scenario units</p>
+              <h3 id="selectedBookTitle"></h3>
+            </div>
+          </div>
+          <div id="unitGrid" class="unit-grid"></div>
+        </div>
+      </section>
+
+    </section>
+
+    <section id="unitView" hidden>
+      <section class="unit-banner">
+        <div>
+          <button id="backToDaysInlineBtn" class="text-button" type="button">← 返回场景</button>
+          <p class="eyebrow" id="unitKicker">PAGE UNIT</p>
+          <h2 id="unitTitle">P1 · Accommodation</h2>
+          <p id="unitDescription" class="unit-description"></p>
+        </div>
+        <div class="unit-banner-actions">
+          <button id="startAllTypingBtn" class="primary-button" type="button">开始全部盲听</button>
+          <button id="startStarTypingBtn" class="accent-button" type="button">★ 星标盲听</button>
+        </div>
+      </section>
+
+      <nav class="view-tabs" aria-label="学习模式">
+        <button id="wordListTab" class="tab-button is-active" type="button">词汇点读</button>
+        <button id="typingTab" class="tab-button" type="button">听写打字</button>
+      </nav>
+
+      <section id="wordListView">
+        <section class="controls-card">
+          <label class="search-box"><span>搜索英文或中文</span><input id="searchInput" type="search" placeholder="如：rent / 房租"></label>
+          <div class="control-actions">
+            <span class="audio-mode-note"><span>发音</span><strong>British English</strong></span>
+            <button id="playAllBtn" class="secondary-button" type="button">▶ 顺序播放</button>
+            <button id="stopBtn" class="secondary-button" type="button">■ 停止</button>
+            <button id="toggleChineseBtn" class="secondary-button" type="button" aria-pressed="false">隐藏中文</button>
+          </div>
+        </section>
+        <div id="wordGrid" class="word-grid"></div>
+      </section>
+
+      <section id="typingView" class="typing-view" hidden>
+        <div class="typing-layout">
+          <article class="typing-card">
+            <div class="typing-card-top">
+              <div>
+                <p class="eyebrow" id="typingModeLabel">ALL BLIND LISTENING</p>
+                <p id="typingProgress" class="typing-progress">1 / 40</p>
+              </div>
+              <button id="typingReplayBtn" class="round-play-button" type="button" title="再听一遍">▶</button>
+            </div>
+            <div class="typing-prompt">
+              <span class="prompt-label">LISTEN & TYPE</span>
+              <h3>听音频，输入英文拼写</h3>
+              <div class="typing-hint-row">
+                <p id="typingHint" class="typing-hint" hidden></p>
+                <button id="typingHintToggleBtn" class="hint-button" type="button" aria-pressed="false">显示中文提示</button>
+              </div>
+            </div>
+            <form id="typingForm" class="typing-form">
+              <label for="typingInput">你的答案</label>
+              <div class="typing-input-row">
+                <input id="typingInput" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="输入英文单词或短语">
+                <button id="typingSubmitBtn" class="primary-button" type="submit">检查</button>
+              </div>
+            </form>
+            <div id="typingResult" class="typing-result" aria-live="polite"></div>
+            <div id="typingAnswer" class="typing-answer" hidden></div>
+            <div class="typing-actions">
+              <button id="typingShowAnswerBtn" class="secondary-button" type="button">显示答案</button>
+              <button id="typingMarkBtn" class="accent-button" type="button">☆ 加入星标</button>
+              <button id="typingNextBtn" class="primary-button" type="button">下一题 →</button>
+            </div>
+          </article>
+
+          <aside class="typing-side-card">
+            <div class="side-score"><span>本次正确率</span><strong id="typingAccuracy">—</strong></div>
+            <div class="score-row"><span>已答</span><strong id="typingAnswered">0</strong></div>
+            <div class="score-row"><span>答对</span><strong id="typingCorrect">0</strong></div>
+            <div class="score-row"><span>星标词</span><strong id="typingStarred">0</strong></div>
+            <hr>
+            <p>快捷键</p>
+            <div class="shortcut"><kbd>Enter</kbd><span>检查 / 下一题</span></div>
+            <div class="shortcut"><kbd>R</kbd><span>再听一遍</span></div>
+            <button id="typingBackToListBtn" class="text-button" type="button">← 返回词汇点读</button>
+          </aside>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer-note">本网站使用本地 British English 词条 MP3；学习数据只保存在当前浏览器，星标不会自动同步。</footer>
+
+  <audio id="wordAudio" preload="auto"></audio>
+  <script src="./vocab-data.js?v=2"></script>
+  <script src="./app.js?v=2"></script>
+</body>
+</html>
