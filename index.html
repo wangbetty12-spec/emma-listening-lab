@@ -59,6 +59,7 @@
       background: linear-gradient(180deg, var(--navy-950), var(--navy-900) 58%, #173253);
     }
     .brand { display: flex; align-items: center; gap: 12px; padding: 0 10px 32px; }
+    .brand-main { min-width: 0; display: flex; align-items: center; gap: 12px; }
     .brand-mark {
       width: 42px;
       height: 42px;
@@ -73,12 +74,20 @@
     }
     .brand-name { font-size: 17px; font-weight: 800; letter-spacing: .02em; }
     .brand-sub { color: #8ea7c7; font-size: 11px; margin-top: 1px; }
+    .sidebar-toggle { width: 32px; height: 32px; display: grid; place-items: center; flex: 0 0 32px; margin-left: auto; padding: 0; color: #c8d9ed; border: 1px solid rgba(173, 203, 237, .22); border-radius: 10px; background: rgba(255,255,255,.07); font-size: 20px; line-height: 1; transition: background .18s ease, color .18s ease, transform .18s ease; }
+    .sidebar-toggle:hover { color: #fff; border-color: rgba(173, 203, 237, .38); background: rgba(255,255,255,.14); }
+    .sidebar-toggle-text { display: none; }
     .side-kicker { padding: 0 10px 10px; color: #7690b1; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
     .module-card { margin-bottom: 12px; padding: 15px; border: 1px solid rgba(173, 203, 237, .16); border-radius: 18px; background: rgba(255,255,255,.07); }
     .module-card.active { border-color: rgba(255, 177, 122, .44); background: rgba(240, 122, 72, .14); }
     .module-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .module-toggle { width: 100%; padding: 0; color: inherit; border: 0; background: transparent; text-align: left; cursor: pointer; }
+    .module-toggle:hover .module-title { color: #fff; }
     .module-title { font-size: 15px; font-weight: 750; }
     .module-count { color: #a9c0dc; font-size: 11px; }
+    .module-chevron { margin-left: 5px; color: #a9c0dc; font-size: 17px; line-height: 1; transition: transform .18s ease; }
+    .module-card.collapsed .module-desc, .module-card.collapsed .track-list { display: none; }
+    .module-card.collapsed .module-chevron { transform: rotate(-90deg); }
     .module-desc { margin: 6px 0 0; color: #9db2cc; font-size: 12px; line-height: 1.5; }
     .track-list { display: grid; gap: 7px; margin-top: 14px; }
     .track-btn {
@@ -209,6 +218,14 @@
     .hidden { display: none !important; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
+    .app-shell.sidebar-collapsed .sidebar { width: 78px; flex-basis: 78px; padding: 24px 12px; overflow-y: auto; }
+    .app-shell.sidebar-collapsed .brand { flex-direction: column; gap: 13px; padding: 0 0 22px; }
+    .app-shell.sidebar-collapsed .brand-main { justify-content: center; }
+    .app-shell.sidebar-collapsed .brand-copy, .app-shell.sidebar-collapsed .side-kicker, .app-shell.sidebar-collapsed #moduleList, .app-shell.sidebar-collapsed .side-note { display: none; }
+    .app-shell.sidebar-collapsed .brand-mark { width: 48px; height: 48px; flex-basis: 48px; font-size: 10px; }
+    .app-shell.sidebar-collapsed .sidebar-toggle { margin: 0; }
+    .app-shell.sidebar-collapsed .sidebar-toggle-icon { transform: rotate(180deg); }
+
     @media (max-width: 980px) {
       .sidebar { width: 260px; flex-basis: 260px; }
       .main { padding: 24px 23px 42px; }
@@ -219,6 +236,7 @@
       .app-shell { display: block; }
       .sidebar { position: relative; width: 100%; height: auto; max-height: 360px; overflow-y: auto; padding: 18px 16px 17px; }
       .brand { padding-bottom: 16px; }
+      .brand-main { flex: 1; }
       .side-kicker { display: none; }
       .module-card { padding: 12px; }
       .track-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 11px; }
@@ -248,6 +266,9 @@
       .foot-left, .foot-right { justify-content: space-between; }
       .result { align-items: flex-start; flex-wrap: wrap; }
       .result-actions { width: 100%; margin-left: 53px; }
+      .app-shell.sidebar-collapsed .sidebar { width: 100%; height: auto; max-height: none; padding: 14px 16px; }
+      .app-shell.sidebar-collapsed .brand { flex-direction: row; justify-content: space-between; padding-bottom: 0; }
+      .app-shell.sidebar-collapsed .brand-main { flex: 0 0 auto; }
     }
   </style>
 </head>
@@ -255,11 +276,14 @@
   <div class="app-shell">
     <aside class="sidebar" aria-label="专项练习导航">
       <div class="brand">
-        <div class="brand-mark">IELTS</div>
-        <div>
-          <div class="brand-name">Emma's Listening Lab</div>
-          <div class="brand-sub">专项技能在线练习</div>
+        <div class="brand-main">
+          <div class="brand-mark">IELTS</div>
+          <div class="brand-copy">
+            <div class="brand-name">Emma's Listening Lab</div>
+            <div class="brand-sub">专项技能在线练习</div>
+          </div>
         </div>
+        <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-expanded="true" title="收起菜单"><span class="sidebar-toggle-icon" aria-hidden="true">‹</span><span class="sidebar-toggle-text">收起菜单</span></button>
       </div>
       <div class="side-kicker">Skill library</div>
       <div id="moduleList"></div>
@@ -499,18 +523,30 @@
 
     const STORAGE_KEY = 'ielts-spelling-mvp-v1';
     const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"answers":{},"results":{},"times":{}}');
+    state.collapsedModules = state.collapsedModules || {};
+    state.sidebarCollapsed = Boolean(state.sidebarCollapsed);
     let activeIndex = 0;
     let showAnswers = false;
     let wrongOnly = false;
     let timerHandle;
 
     const $ = (selector) => document.querySelector(selector);
+    const appShell = $('.app-shell');
     const moduleList = $('#moduleList');
     const questionGrid = $('#questionGrid');
+    const sidebarToggle = $('#sidebarToggle');
 
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       updateOverallProgress();
+    }
+
+    function applySidebarState() {
+      appShell.classList.toggle('sidebar-collapsed', state.sidebarCollapsed);
+      sidebarToggle.setAttribute('aria-expanded', String(!state.sidebarCollapsed));
+      sidebarToggle.setAttribute('title', state.sidebarCollapsed ? '展开菜单' : '收起菜单');
+      sidebarToggle.querySelector('.sidebar-toggle-icon').textContent = state.sidebarCollapsed ? '›' : '‹';
+      sidebarToggle.querySelector('.sidebar-toggle-text').textContent = state.sidebarCollapsed ? '展开菜单' : '收起菜单';
     }
 
     function normalize(value) {
@@ -593,10 +629,12 @@
         }
         byModule.get(moduleName).items.push({ track, index });
       });
-      moduleList.innerHTML = groups.map((group) => `<section class="module-card ${group.items.some((item) => item.index === activeIndex) ? 'active' : ''}">
-        <div class="module-row"><div class="module-title">${escapeHtml(group.name)}</div><div class="module-count">${group.items.length} 练习</div></div>
+      moduleList.innerHTML = groups.map((group, groupIndex) => {
+        const collapsed = Boolean(state.collapsedModules[group.name]);
+        return `<section class="module-card ${group.items.some((item) => item.index === activeIndex) ? 'active' : ''} ${collapsed ? 'collapsed' : ''}">
+        <button class="module-row module-toggle" data-module="${escapeHtml(group.name)}" type="button" aria-expanded="${String(!collapsed)}" aria-controls="module-panel-${groupIndex}"><span class="module-title">${escapeHtml(group.name)}</span><span class="module-count">${group.items.length} 练习</span><span class="module-chevron" aria-hidden="true">⌄</span></button>
         <p class="module-desc">${escapeHtml(group.description)}</p>
-        <nav class="track-list">${group.items.map(({ track, index }) => {
+        <nav class="track-list" id="module-panel-${groupIndex}">${group.items.map(({ track, index }) => {
           const result = state.results[track.id];
           const done = result && result.graded;
           return `<button class="track-btn ${index === activeIndex ? 'active' : ''}" data-index="${index}" type="button">
@@ -605,7 +643,16 @@
             <span class="track-state ${done ? 'done' : ''}" aria-label="${done ? '已完成' : '未完成'}"></span>
           </button>`;
         }).join('')}</nav>
-      </section>`).join('');
+      </section>`;
+      }).join('');
+      moduleList.querySelectorAll('.module-toggle').forEach((button) => {
+        button.addEventListener('click', () => {
+          const moduleName = button.dataset.module;
+          state.collapsedModules[moduleName] = !state.collapsedModules[moduleName];
+          saveState();
+          renderNavigation();
+        });
+      });
       moduleList.querySelectorAll('.track-btn').forEach((button) => {
         button.addEventListener('click', () => switchTrack(Number(button.dataset.index)));
       });
@@ -892,6 +939,11 @@
       updateTimer();
     }
 
+    sidebarToggle.addEventListener('click', () => {
+      state.sidebarCollapsed = !state.sidebarCollapsed;
+      saveState();
+      applySidebarState();
+    });
     $('#gradeBtn').addEventListener('click', gradeTrack);
     $('#answerBtn').addEventListener('click', () => { showAnswers = !showAnswers; updateAnswerVisibility(); });
     $('#wrongOnlyBtn').addEventListener('click', () => { wrongOnly = !wrongOnly; updateWrongVisibility(); });
@@ -915,6 +967,7 @@
       renderQuestions();
     });
 
+    applySidebarState();
     switchTrack(0);
     updateOverallProgress();
   </script>
